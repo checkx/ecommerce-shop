@@ -16,6 +16,7 @@ import (
 	"ecommerce-shop/internal/db"
 	"ecommerce-shop/internal/logger"
 	"ecommerce-shop/internal/server"
+	"ecommerce-shop/internal/worker"
 )
 
 func main() {
@@ -44,9 +45,9 @@ func main() {
 	}()
 
 	// start background worker
-	// bgCtx, bgCancel := context.WithCancel(context.Background())
-	// defer bgCancel()
-	// go worker.NewReleaser(database, log, 30*time.Second).Start(bgCtx)
+	bgCtx, bgCancel := context.WithCancel(context.Background())
+	defer bgCancel()
+	go worker.NewReleaser(database, log, 30*time.Second).Start(bgCtx)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)

@@ -27,7 +27,7 @@ func (w *Releaser) Start(ctx context.Context) {
 			w.Ticker.Stop()
 			return
 		case <-w.Ticker.C:
-			count, err := repo.ReleaseExpiredReservations(ctx, w.DB, 500)
+			count, err := repo.ReleaseExpiredReservations(ctx, w.DB, 10)
 			if err != nil {
 				w.Log.Error("release reservations failed", zap.Error(err))
 				continue

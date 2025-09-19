@@ -93,7 +93,9 @@ func SumReservedNotExpired(ctx context.Context, q sqlx.ExtContext, warehouseID, 
 }
 
 func ReleaseExpiredReservations(ctx context.Context, db *sqlx.DB, limit int) (int, error) {
-	res, err := db.ExecContext(ctx, `UPDATE reservations SET released=TRUE WHERE released=FALSE AND expires_at<=now() LIMIT $1`, limit)
+	res, err := db.ExecContext(ctx, `UPDATE reservations SET released=TRUE WHERE id IN (
+		SELECT id FROM reservations WHERE released=FALSE AND expires_at<=now() LIMIT $1
+	)`, limit)
 	if err != nil {
 		return 0, err
 	}
